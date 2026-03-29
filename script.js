@@ -69,6 +69,8 @@ const functionSuffixes = [
 	"pi",
 	"e"
 ];
+const compiledExpressionCache = new Map();
+const isLikelyMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 keypad.addEventListener("click", (event) => {
 	const button = event.target.closest("button");
@@ -159,6 +161,7 @@ calcToolFieldsEl.addEventListener("click", (event) => {
 	if (toolActionButton) {
 		if (toolActionButton.dataset.toolAction === "insert-x") {
 			setActiveToolValue(appendXTo(getActiveToolValue()));
+			render();
 		}
 		return;
 	}
@@ -377,6 +380,18 @@ function evaluateExpression(fromEquals = false) {
 }
 
 function safeEval(rawExpression, xValue) {
+	const evaluator = getCompiledEvaluator(rawExpression);
+	const X = Number.isFinite(xValue) ? xValue : variableValues.X;
+	const result = evaluator(X);
+
+	if (!Number.isFinite(result)) {
+		throw new Error("Invalid result");
+	}
+
+	return result;
+}
+
+function getCompiledEvaluator(rawExpression) {
 	const jsExpression = rawExpression
 		.replace(/pi/g, "PI")
 		.replace(/\^/g, "**")
@@ -389,6 +404,10 @@ function safeEval(rawExpression, xValue) {
 		.replace(/log\(/g, "LOG10(")
 		.replace(/ln\(/g, "LN(")
 		.replace(/sqrt\(/g, "SQRT(");
+	const cacheKey = `${angleMode}|${jsExpression}`;
+	if (compiledExpressionCache.has(cacheKey)) {
+		return compiledExpressionCache.get(cacheKey);
+	}
 
 	const TRIG_SIN = (value) => Math.sin(toRadians(value));
 	const TRIG_COS = (value) => Math.cos(toRadians(value));
@@ -401,10 +420,8 @@ function safeEval(rawExpression, xValue) {
 	const SQRT = (value) => Math.sqrt(value);
 	const PI = Math.PI;
 	const e = Math.E;
-	const X = Number.isFinite(xValue) ? xValue : variableValues.X;
-	const x = X;
 
-	const result = Function(
+	const evaluator = Function(
 		"TRIG_SIN",
 		"TRIG_COS",
 		"TRIG_TAN",
@@ -416,9 +433,7 @@ function safeEval(rawExpression, xValue) {
 		"SQRT",
 		"PI",
 		"e",
-		"X",
-		"x",
-		`"use strict"; return (${jsExpression});`
+		`"use strict"; return function(X) { const x = X; return (${jsExpression}); };`
 	)(
 		TRIG_SIN,
 		TRIG_COS,
@@ -430,16 +445,16 @@ function safeEval(rawExpression, xValue) {
 		LN,
 		SQRT,
 		PI,
-		e,
-		X,
-		x
+		e
 	);
 
-	if (!Number.isFinite(result)) {
-		throw new Error("Invalid result");
+	compiledExpressionCache.set(cacheKey, evaluator);
+	if (compiledExpressionCache.size > 80) {
+		const firstKey = compiledExpressionCache.keys().next().value;
+		compiledExpressionCache.delete(firstKey);
 	}
 
-	return result;
+	return evaluator;
 }
 
 function openCalcTool(type) {
@@ -624,7 +639,13 @@ function numericalIntegral(fnExpression, a, b) {
 		sign = -1;
 	}
 
-	const segments = 600;
+	const span = Math.abs(end - start);
+	const targetDensity = isLikelyMobile ? 40 : 70;
+	let segments = Math.ceil(span * targetDensity);
+	segments = Math.min(isLikelyMobile ? 320 : 720, Math.max(isLikelyMobile ? 80 : 120, segments));
+	if (segments % 2 !== 0) {
+		segments += 1;
+	}
 	const h = (end - start) / segments;
 	let sum = safeEval(fnExpression, start) + safeEval(fnExpression, end);
 
@@ -656,7 +677,6 @@ function setActiveToolValue(value) {
 	}
 
 	toolState.fields[toolState.activeField] = value;
-	renderCalcTool();
 }
 
 function appendNumberTo(current, value) {

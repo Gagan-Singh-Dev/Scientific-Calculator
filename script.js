@@ -71,8 +71,24 @@ const functionSuffixes = [
 ];
 const compiledExpressionCache = new Map();
 const isLikelyMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const PREVIEW_DEBOUNCE_MS = isLikelyMobile ? 75 : 0;
+let previewTimerId = null;
+
+keypad.addEventListener("pointerdown", (event) => {
+	if (event.pointerType && event.pointerType !== "mouse") {
+		event.preventDefault();
+	}
+	handleKeypadInput(event);
+});
 
 keypad.addEventListener("click", (event) => {
+	if (event.detail !== 0) {
+		return;
+	}
+	handleKeypadInput(event);
+});
+
+function handleKeypadInput(event) {
 	const button = event.target.closest("button");
 	if (!button) {
 		return;
@@ -153,7 +169,7 @@ keypad.addEventListener("click", (event) => {
 	}
 
 	render();
-});
+}
 
 calcToolFieldsEl.addEventListener("click", (event) => {
 	const fieldButton = event.target.closest("button[data-field]");
@@ -1076,12 +1092,34 @@ function formatResult(value) {
 function render() {
 	expressionEl.textContent = formatDisplayExpression(expression);
 	if (!toolState.active) {
-		evaluateExpression(false);
+		schedulePreviewEvaluation();
 		if (customResultText) {
 			resultEl.textContent = customResultText;
 		}
 	}
 	renderCalcTool();
+}
+
+function schedulePreviewEvaluation() {
+	if (customResultText) {
+		return;
+	}
+
+	if (PREVIEW_DEBOUNCE_MS === 0) {
+		evaluateExpression(false);
+		return;
+	}
+
+	if (previewTimerId) {
+		clearTimeout(previewTimerId);
+	}
+
+	previewTimerId = setTimeout(() => {
+		previewTimerId = null;
+		if (!toolState.active && !customResultText) {
+			evaluateExpression(false);
+		}
+	}, PREVIEW_DEBOUNCE_MS);
 }
 
 render();

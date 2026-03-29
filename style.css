@@ -409,12 +409,14 @@ body::-webkit-scrollbar {
 @media (max-width: 560px) {
 	.blob {
 		animation: none;
+		filter: none;
 		opacity: 0.3;
 	}
 
 	.calculator {
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		box-shadow: 0 12px 28px rgba(4, 10, 24, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 	}
 
 	.calculator {
@@ -445,11 +447,20 @@ body::-webkit-scrollbar {
 	.github-fab {
 		width: 40px;
 		height: 40px;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		box-shadow: 0 4px 12px rgba(3, 8, 18, 0.28);
 	}
 
 	.github-icon {
 		width: 20px;
 		height: 20px;
+	}
+
+	.btn,
+	.chip,
+	.github-fab {
+		transition-duration: 90ms;
 	}
 }
 

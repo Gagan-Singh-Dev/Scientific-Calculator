@@ -157,13 +157,13 @@ body::-webkit-scrollbar {
 }
 
 .display.tool-open[data-tool="differentiate"] {
-	min-height: 148px;
+	min-height: 136px;
 }
 
 .display.tool-open[data-tool="differentiate"] .calc-tool {
-	gap: 6px;
-	padding-top: 12px;
-	padding-bottom: 12px;
+	gap: 5px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .display.tool-open[data-tool="differentiate"] .calc-tool-fields {
@@ -172,12 +172,12 @@ body::-webkit-scrollbar {
 }
 
 .display.tool-open[data-tool="differentiate"] .calc-tool-actions {
-	margin-top: 4px;
+	margin-top: 2px;
 }
 
 .display.tool-open[data-tool="integrate"],
 .display.tool-open[data-tool="cubic"] {
-	min-height: 220px;
+	min-height: 186px;
 }
 
 .expression,
@@ -301,7 +301,7 @@ body::-webkit-scrollbar {
 	display: flex;
 	justify-content: flex-end;
 	gap: 8px;
-	margin-top: 8px;
+	margin-top: 4px;
 }
 
 .keypad {

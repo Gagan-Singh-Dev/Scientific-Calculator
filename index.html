@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+    <title>Glass Scientific Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-bg" aria-hidden="true">
+        <span class="blob blob-1"></span>
+        <span class="blob blob-2"></span>
+        <span class="blob blob-3"></span>
+    </div>
+
+    <main class="calculator" role="application" aria-label="Scientific calculator">
+        <header class="topbar">
+            <div class="toggles" role="group" aria-label="Function toggles">
+                <button class="chip active" data-action="toggle-angle" type="button">DEG</button>
+                <button class="chip" data-action="toggle-shift" type="button">SHIFT</button>
+                <button class="chip" data-action="open-eqn" type="button">EQN</button>
+            </div>
+        </header>
+
+        <section class="display" aria-live="polite">
+            <p id="expression" class="expression" aria-label="Expression">0</p>
+            <p id="result" class="result" aria-label="Result">0</p>
+
+            <div class="calc-tool hidden" id="calcTool" aria-live="polite">
+                <p class="calc-tool-title" id="calcToolTitle">Derivative Mode</p>
+                <div class="calc-tool-fields" id="calcToolFields"></div>
+                <div class="calc-tool-actions">
+                    <button class="chip" id="calcToolCancel" type="button">Cancel</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="keypad" id="keypad">
+            <button class="btn btn-danger" data-action="clear" type="button">AC</button>
+            <button class="btn" data-action="delete" type="button">DEL</button>
+            <button class="btn btn-scientific" data-action="paren" data-value="(" type="button">(</button>
+            <button class="btn btn-scientific" data-action="paren" data-value=")" type="button">)</button>
+            <button class="btn btn-scientific" data-action="differentiate" type="button">d/dx</button>
+
+            <button class="btn btn-scientific" data-action="fraction" type="button">a/b</button>
+            <button class="btn btn-scientific" data-action="function" data-fn="log" type="button">log</button>
+            <button class="btn btn-scientific" data-action="function" data-fn="ln" type="button">ln</button>
+            <button class="btn btn-scientific" data-action="operator" data-value="^" type="button">xʸ</button>
+            <button class="btn btn-scientific" data-action="integrate" type="button">∫dx</button>
+
+            <button class="btn btn-scientific" data-action="function" data-fn="sin" data-alt="asin" type="button">sin</button>
+            <button class="btn btn-scientific" data-action="function" data-fn="cos" data-alt="acos" type="button">cos</button>
+            <button class="btn btn-scientific" data-action="function" data-fn="tan" data-alt="atan" type="button">tan</button>
+            <button class="btn btn-scientific" data-action="reciprocal" type="button">x⁻¹</button>
+            <button class="btn btn-op" data-action="operator" data-value="/" type="button">÷</button>
+
+            <button class="btn" data-action="number" data-value="7" type="button">7</button>
+            <button class="btn" data-action="number" data-value="8" type="button">8</button>
+            <button class="btn" data-action="number" data-value="9" type="button">9</button>
+            <button class="btn btn-scientific" data-action="square" type="button">x²</button>
+            <button class="btn btn-op" data-action="operator" data-value="*" type="button">×</button>
+
+            <button class="btn" data-action="number" data-value="4" type="button">4</button>
+            <button class="btn" data-action="number" data-value="5" type="button">5</button>
+            <button class="btn" data-action="number" data-value="6" type="button">6</button>
+            <button class="btn btn-scientific" data-action="function" data-fn="sqrt" type="button">√</button>
+            <button class="btn btn-op" data-action="operator" data-value="-" type="button">−</button>
+
+            <button class="btn" data-action="number" data-value="1" type="button">1</button>
+            <button class="btn" data-action="number" data-value="2" type="button">2</button>
+            <button class="btn" data-action="number" data-value="3" type="button">3</button>
+            <button class="btn btn-scientific" data-action="constant" data-value="pi" type="button">π</button>
+            <button class="btn btn-op" data-action="operator" data-value="+" type="button">+</button>
+
+            <button class="btn" data-action="number" data-value="0" type="button">0</button>
+            <button class="btn btn-scientific" data-action="number" data-value="00" type="button">00</button>
+            <button class="btn" data-action="decimal" type="button">.</button>
+            <button class="btn btn-scientific" data-action="constant" data-value="e" type="button">e</button>
+            <button class="btn btn-equals" data-action="equals" type="button">=</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
